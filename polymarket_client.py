@@ -1,0 +1,117 @@
+"""
+polymarket_client.py — Interacción con Polymarket CLOB API.
+Documentación: https://docs.polymarket.com
+"""
+
+import os
+import logging
+import requests
+from py_clob_client.client import ClobClient
+from py_clob_client.clob_types import OrderArgs, OrderType
+
+log = logging.getLogger(__name__)
+
+# ── Configuración desde variables de entorno (GitHub Secrets) ────────────────
+POLY_HOST        = "https://clob.polymarket.com"
+POLY_CHAIN_ID    = 137   # Polygon mainnet
+PRIVATE_KEY      = os.environ["POLY_PRIVATE_KEY"]
+API_KEY          = os.environ["POLY_API_KEY"]
+API_SECRET       = os.environ["POLY_API_SECRET"]
+API_PASSPHRASE   = os.environ["POLY_API_PASSPHRASE"]
+
+
+def _get_client() -> ClobClient:
+    return ClobClient(
+        host       = POLY_HOST,
+        chain_id   = POLY_CHAIN_ID,
+        key        = PRIVATE_KEY,
+        creds      = {"key": API_KEY, "secret": API_SECRET, "passphrase": API_PASSPHRASE},
+    )
+
+
+def find_active_market(window_ts: int) -> dict | None:
+    """
+    Busca el mercado BTC Up/Down de 5 min para el timestamp dado.
+    Devuelve {"condition_id": ..., "tokens": {"up": token_id, "down": token_id}}
+    """
+    try:
+        # El slug del mercado sigue el patrón btc-updown-5m-{timestamp}
+        slug = f"btc-updown-5m-{window_ts}"
+        resp = requests.get(
+            f"https://gamma-api.polymarket.com/events",
+            params={"slug": slug},
+            timeout=8
+        )
+        resp.raise_for_status()
+        events = resp.json()
+
+        if not events:
+            log.warning(f"Mercado no encontrado para slug: {slug}")
+            return None
+
+        event  = events[0]
+        market = event["markets"][0]
+
+        # Identificar qué token es "up" y cuál es "down"
+        tokens = {}
+        for outcome in market["outcomes"]:
+            key = "up" if outcome.lower() in ("up", "sube", "above") else "down"
+            tokens[key] = outcome["clobTokenId"]
+
+        log.info(f"Mercado encontrado: {market['conditionId']}")
+        return {"condition_id": market["conditionId"], "tokens": tokens}
+
+    except Exception as e:
+        log.error(f"Error buscando mercado: {e}")
+        return None
+
+
+def get_market_probability(token_id: str) -> float:
+    """
+    Obtiene la probabilidad implícita actual del token en el order book.
+    Devuelve un float entre 0 y 1.
+    """
+    try:
+        client = _get_client()
+        book   = client.get_order_book(token_id)
+
+        # El mejor ask es el precio al que compramos (= probabilidad implícita)
+        if book.asks:
+            price = float(book.asks[0].price)
+            log.info(f"Probabilidad actual del mercado: {price:.1%}")
+            return price
+
+        return 0.0
+
+    except Exception as e:
+        log.error(f"Error obteniendo probabilidad: {e}")
+        return 0.0
+
+
+def place_buy_order(token_id: str, amount_usdc: float, price: float) -> dict | None:
+    """
+    Coloca una orden de compra en el CLOB.
+    amount_usdc: cuántos dólares gastamos (ej: 10)
+    price: precio del token (ej: 0.99)
+    """
+    try:
+        client = _get_client()
+        shares = round(amount_usdc / price, 4)
+
+        order_args = OrderArgs(
+            token_id  = token_id,
+            price     = price,
+            size      = shares,
+            side      = "BUY",
+        )
+
+        # Orden limit que se ejecuta inmediatamente (FOK = Fill or Kill)
+        signed_order = client.create_order(order_args)
+        resp         = client.post_order(signed_order, OrderType.FOK)
+
+        log.info(f"Orden ejecutada: {shares} shares a ${price} = ${amount_usdc}")
+        return resp
+
+    except Exception as e:
+        log.error(f"Error colocando orden: {e}")
+        return None
