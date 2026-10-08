@@ -1,3 +1,11 @@
+# Laboratorio de estudio: CFA y opciones
+
+## CFA Level I — primeros dos módulos de Portfolio Management
+
+Descarga **[cfa-study.html](cfa-study.html)** y ábrelo en tu navegador. Incluye preguntas en español e inglés, notas y fórmulas para 16 objetivos, 80 preguntas conceptuales y 23 plantillas numéricas con 7 variantes cada una, práctica adaptativa y simulacros cronometrados. Detalles y convenciones en [cfa/README.md](cfa/README.md). El PDF no se distribuye. La meta 100/100 es de práctica; no garantiza la nota oficial. Módulos 3–6 pendientes.
+
+Para desarrollo, `npm start` desde la raíz; el entrenador está en `/cfa/`. `npm test` valida ambos proyectos. `npm run build` genera los dos archivos descargables.
+
 # Option Lab
 
 Juego educativo en español de reconocimiento y construcción de estrategias de opciones. Es una aplicación estática, sin dependencias, cuentas, credenciales ni órdenes reales. Este repositorio contiene únicamente el juego y su código fuente.

@@ -5,3 +5,4 @@ const bundle=strategies.replace(/^export /gm,'')+'\n'+app.replace(/^import .*;\n
 const standalone=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${css}</style>`).replace('<script type="module" src="app.js"></script>',()=>`<script type="module">${bundle}</script>`);
 await writeFile(new URL('play.html',import.meta.url),standalone);
 console.log('Built play.html — standalone, offline, no external dependencies.');
+await import('./cfa/build.mjs');
