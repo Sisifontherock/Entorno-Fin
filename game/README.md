@@ -4,6 +4,8 @@ Juego educativo en español de reconocimiento y construcción de estrategias de 
 
 ## Jugar
 
+**Sin instalar nada:** descarga `play.html` y ábrelo en tu navegador. Incluye el juego completo y funciona sin Internet. `npm run build` vuelve a generar este archivo después de cambiar el código.
+
 Desde `game/`, ejecuta `npm start` (requiere Python 3) y abre el puerto 8080 en tu entorno de desarrollo. También puedes usar cualquier servidor de archivos estáticos. Abre `index.html` a través del servidor, no con `file://`, porque utiliza módulos de JavaScript.
 
 1. Selecciona un nivel y reconoce la curva de beneficio/pérdida al vencimiento.
