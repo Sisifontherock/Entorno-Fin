@@ -1,12 +1,12 @@
 # Option Lab
 
-Juego educativo en español de reconocimiento y construcción de estrategias de opciones. Es una aplicación estática, sin dependencias, cuentas, credenciales ni órdenes reales. El bot existente es independiente.
+Juego educativo en español de reconocimiento y construcción de estrategias de opciones. Es una aplicación estática, sin dependencias, cuentas, credenciales ni órdenes reales. Este repositorio contiene únicamente el juego y su código fuente.
 
 ## Jugar
 
 **Sin instalar nada:** descarga `play.html` y ábrelo en tu navegador. Incluye el juego completo y funciona sin Internet. `npm run build` vuelve a generar este archivo después de cambiar el código.
 
-Desde `game/`, ejecuta `npm start` (requiere Python 3) y abre el puerto 8080 en tu entorno de desarrollo. También puedes usar cualquier servidor de archivos estáticos. Abre `index.html` a través del servidor, no con `file://`, porque utiliza módulos de JavaScript.
+Desde la raíz del repositorio, ejecuta `npm start` (requiere Python 3) y abre el puerto 8080 en tu entorno de desarrollo. También puedes usar cualquier servidor de archivos estáticos. Abre `index.html` a través del servidor, no con `file://`, porque utiliza módulos de JavaScript.
 
 1. Selecciona un nivel y reconoce la curva de beneficio/pérdida al vencimiento.
 2. Elige comprar o vender, y la cantidad, para cada pata.
@@ -27,4 +27,4 @@ Todos los precios y primas son ficticios. P/L por unidad de activo y al vencimie
 
 `npm test` ejecuta pruebas con Node 18+ para resultados, equilibrios, pérdidas extremas, cantidades y prevención de preguntas ambiguas. `node --check app.js` comprueba la sintaxis.
 
-Para GitHub Pages, publica la carpeta `game/` como sitio estático mediante el flujo de despliegue que prefieras. No necesitas el backend de Python ni las credenciales de Polymarket para jugar.
+Para GitHub Pages, publica la raíz del repositorio como sitio estático mediante el flujo de despliegue que prefieras. No necesitas el backend de Python ni las credenciales de Polymarket para jugar.

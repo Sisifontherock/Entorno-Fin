@@ -4,4 +4,4 @@ const [html,css,strategies,app]=await Promise.all(['index.html','style.css','str
 const bundle=strategies.replace(/^export /gm,'')+'\n'+app.replace(/^import .*;\n/,'');
 const standalone=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${css}</style>`).replace('<script type="module" src="app.js"></script>',()=>`<script type="module">${bundle}</script>`);
 await writeFile(new URL('play.html',import.meta.url),standalone);
-console.log('Built game/play.html — standalone, offline, no external dependencies.');
+console.log('Built play.html — standalone, offline, no external dependencies.');
